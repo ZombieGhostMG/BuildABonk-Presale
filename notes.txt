@@ -1,0 +1,4 @@
+anchor upgrade --program-id ehzTTCgmtXwK1GyHZRRnte4Rdt1yTvrvG635M76RPfm ./target/deploy/token_presale.so
+solana address -k ./target/deploy/token_presale-keypair.json
+
+ehzTTCgmtXwK1GyHZRRnte4Rdt1yTvrvG635M76RPfm
