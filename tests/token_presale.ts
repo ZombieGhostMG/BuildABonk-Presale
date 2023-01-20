@@ -8,6 +8,7 @@ import {
   TOKEN_PROGRAM_ID,
   ASSOCIATED_TOKEN_PROGRAM_ID,
   getAccount,
+  getAssociatedTokenAddressSync,
 } from "@solana/spl-token"
 
 describe("token_presale", () => {
@@ -29,6 +30,9 @@ describe("token_presale", () => {
   const TEN = new BN(10);
   const ONE = new BN(1);
   const TWO = new BN(2);
+
+  const mint = anchor.web3.Keypair.generate();
+
 
   const getWalletPDA = async () => {
     return (
@@ -122,21 +126,48 @@ describe("token_presale", () => {
     console.log("Your transaction signature", tx);
   });
 
-  it("Deposited tokens", async () => {
+  it("Deposited tokens to the presale", async () => {
 
     const PRESALE_PDA = await getPresalePDA( 1 );
     console.log(`Presale address: ${PRESALE_PDA}`);
 
     const tx = await program.methods
-      .editPresale( 1, PUBKEY1, PUBKEY2, ONE, ONE, TEN )
-      .accounts({
-        presaleDetails: PRESALE_PDA,
-        authority: MY_PUBKEY
-      })
-      .rpc();
+      .depositPresaleTokens( TEN )
+      .accounts({ 
+        tokenProgram: TOKEN_PROGRAM_ID,
+        from: MY_PUBKEY,
+      }).rpc();
 
-    console.log("Your transaction signature", tx);
+
+    // let associatedTokenAccount = await getAssociatedTokenAddressSync(
+    //   mint.publicKey,
+    //   MY_PUBKEY,
+    // );
+
+    // console.log(`Associated token account: ${associatedTokenAccount}`);
+
   });
+
+  it("Got accounts!", async () => {
+
+    const WALLET_PDA = await getWalletPDA();
+    const PRESALE_PDA = await getPresalePDA( 1 );
+    console.log(`Presale address: ${PRESALE_PDA}`);
+
+    const walletAccounts = await program.account.walletDetails.all();
+    const presaleAccounts = await program.account.presaleDetails.all();
+    const presaleAccount = await program.account.presaleDetails.fetch(PRESALE_PDA);
+
+    // const todoAccounts = await program.account.todoAccount.all([authorFilter(publicKey.toString())])
+
+    // const incompleteTodos = useMemo(() => todos.filter((todo) => !todo.account.marked), [todos])
+    // const completedTodos = useMemo(() => todos.filter((todo) => todo.account.marked), [todos])
+
+    console.log(walletAccounts);
+    console.log(presaleAccounts);
+
+  });
+
 
 
 

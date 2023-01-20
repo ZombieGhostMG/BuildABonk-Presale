@@ -1,11 +1,15 @@
 use anchor_lang::prelude::*;
 use anchor_spl::token;
-use anchor_spl::token::{Token, Transfer};
+use anchor_spl::token::{Token, Mint, MintTo, Transfer, mint_to};
 
 pub mod constants;
 pub mod errors;
-pub mod states;
-use crate::{constants::*, errors::*, states::*};
+pub mod state;
+use crate::{
+    constants::*, 
+    // errors::*, 
+    state::*
+};
 
 declare_id!("ehzTTCgmtXwK1GyHZRRnte4Rdt1yTvrvG635M76RPfm");
 
