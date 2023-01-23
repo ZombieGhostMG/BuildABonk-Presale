@@ -1,14 +1,18 @@
 import PresaleList from './PresaleList'
 
-const PresaleSection = ({ title, presales, action }) => {
+const PresaleSection = ({ presales}) => {
     return (
-        <div className={""}>
-            <h1 className="">
-                {title} - {presales.length}
-            </h1>
+        <>
+            <div className={"max-w-[1240px] pt-5 pr-3  mx-auto items-end flex flex-col"}>
+                <h1 className="text-cB text-3xl">
+                    Total: {presales.length}
+                </h1>
+            </div>
+            <div>
 
-            <PresaleList presales={presales} action={action} />
-        </div>
+                <PresaleList presales={presales} />
+            </div>
+        </>
     )
 }
 

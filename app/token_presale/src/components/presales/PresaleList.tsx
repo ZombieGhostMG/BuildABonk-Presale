@@ -1,10 +1,21 @@
 import PresaleItem from './PresaleItem'
 
-const PresaleList = ({ presales, action }) => {
+
+const PresaleList = ({ presales}) => {
+
     return (
-        <ul className={""}>
+        <ul className={"flex flex-wrap max-w-[1240px] mx-auto px-4 py-16 items-center"}>
             {presales.map((presale) => (
-                <PresaleItem key={presale.account.idx} {...presale.account} publicKey={presale.publicKey} action={action} />
+                <PresaleItem 
+                    key={presale.account.identifier} 
+                    presaleIdentifier={presale.account.identifier} 
+                    {...presale.account} 
+                    publicKey={presale.publicKey.toBase58()}
+                    tokenAddress={presale.account.tokenMintAddress.toBase58()}
+                    amountOfTokens={presale.account.tokenAmount.toNumber()}
+                    maxTokensPerWallet={presale.account.maxTokenAmountPerAddress.toNumber()}
+                    price={presale.account.pricePerToken.toNumber()}
+                 />
             ))}
         </ul>
     )

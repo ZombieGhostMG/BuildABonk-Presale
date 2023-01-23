@@ -19,7 +19,7 @@ const AnimatedLi = (props) => {
       whileHover="hover"
       whileTap="pressed"
       variants={liVariants}
-      className={`p-4 ${props.className}`}
+      className={`px-2 py-2 ${props.className}`}
       onClick={props.onClick}
     >
       {props.text}

@@ -15,7 +15,7 @@ const BasicFooter = () => {
 
   return (
     <div className='bg-cA text-cC text-center py-16 flex justify-center align-middle flex-col '>
-            <img src={'/images/MGLogo.png'} alt="" className='h-[50px] w-[50px] mx-auto mb-4 cursor-pointer' onClick={() => router.push("/")}/>
+            <img src={'/images/MGLogo.png'} alt="" className='h-[50px] w-[50px] mx-auto mb-4 cursor-pointer' onClick={() => window.open(TREE_LINK, "_blank")}/>
             {/* <h2>MoonGhost Labs Ltd.</h2> */}
             <p className=' font-light '>Copyright © 2023 - All right reserved</p>
             <div className='flex justify-center align-middle flex-row'>

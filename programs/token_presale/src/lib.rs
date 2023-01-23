@@ -107,7 +107,7 @@ pub mod token_presale {
         let cpi_program = accounts.token_program.to_account_info();
         let cpi_ctx = CpiContext::new(cpi_program, transfer_instruction);
 
-        anchor_spl::token::transfer(cpi_ctx, amount);
+        anchor_spl::token::transfer(cpi_ctx, amount)?;
 
         msg!(
             "Deposited {} tokens to the presale",

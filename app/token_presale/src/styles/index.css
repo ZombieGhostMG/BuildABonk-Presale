@@ -53,9 +53,6 @@ body {
     @apply p-2
   }
 
-  button {
-    @apply bg-gradient-to-r from-[#e83838] to-[#ce1616] py-3 px-7 rounded-3xl
-  }
 }
 
 
