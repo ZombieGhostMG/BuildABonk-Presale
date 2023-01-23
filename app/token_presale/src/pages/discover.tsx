@@ -2,6 +2,7 @@
 import React from 'react'
 import BasicPage from '../components/basic/BasicPage'
 import PresaleSection from '../components/presales/PresaleSection';
+import ConnectWalletCard from '../components/wallet/ConnectWalletCard';
 import usePresale from '../hooks/usePresale'
 
 export default function discover() {
@@ -14,9 +15,7 @@ export default function discover() {
       <PresaleSection presales={getAllPresales}/>
 
       ) : (
-        <div className='flex flex-col items-center justify-center h-full'>
-          <h1>Please Connect Wallet</h1>
-        </div>
+        <ConnectWalletCard />
       )
       
     }
