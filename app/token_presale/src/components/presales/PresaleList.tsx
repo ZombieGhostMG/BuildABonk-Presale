@@ -4,7 +4,7 @@ import PresaleItem from './PresaleItem'
 const PresaleList = ({ presales}) => {
 
     return (
-        <ul className={"flex flex-wrap max-w-[1240px] mx-auto px-4 py-16 items-center"}>
+        <ul className={"flex flex-wrap max-w-[1240px] mx-auto px-4 py-2 items-center"}>
             {presales.map((presale) => (
                 <PresaleItem 
                     key={presale.account.identifier} 

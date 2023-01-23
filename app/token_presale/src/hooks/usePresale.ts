@@ -3,7 +3,7 @@ import { BN } from "@project-serum/anchor";
 import { useEffect, useMemo, useState } from 'react';
 import { PRESALE_PROGRAM_PUBKEY, PRESALE_SEED, WALLET_SEED } from '../constants';
 import { IDL, TokenPresale } from '../interfaces/token_presale';
-import { SystemProgram, PublicKey } from '@solana/web3.js';
+import { SystemProgram, PublicKey, LAMPORTS_PER_SOL } from '@solana/web3.js';
 import { utf8 } from '@project-serum/anchor/dist/cjs/utils/bytes';
 import { findProgramAddressSync } from '@project-serum/anchor/dist/cjs/utils/pubkey';
 import { useAnchorWallet, useConnection, useWallet } from '@solana/wallet-adapter-react';
@@ -15,6 +15,27 @@ export default function usePresale() {
     const handleChange = (e)=> {
         setInput(e.target.value)
     };
+
+    const handleTransactionPending = (pending: boolean) => {
+        setTransactionPending(pending);
+    }
+
+    const getSolanaAirdrop = async () => {
+            const airdropSignature = connection.requestAirdrop(
+                publicKey,
+                2 * LAMPORTS_PER_SOL,
+            );
+            try{
+                const txId = await airdropSignature;     
+                console.log(`Airdrop Transaction Id: ${txId}`);        
+                console.log(`https://explorer.solana.com/tx/${txId}?cluster=devnet`)
+                return false
+            }
+            catch(err){
+                console.log(err);
+                return false
+            }    
+        }
 
     const { connection } = useConnection();
     const { publicKey } = useWallet();
@@ -93,9 +114,11 @@ export default function usePresale() {
                     .rpc();
                 setInitializedWallet(true)
                 toast.success('Successfully initialized user.')
+                return false
             } catch (error) {
                 console.log(error)
                 toast.error(error.toString())
+                return false
             } finally {
                 setTransactionPending(false)
             }
@@ -131,6 +154,7 @@ export default function usePresale() {
             }
         }
     }
+
     const editPresale = async (tokenAccount: PublicKey, quoteTokenAccount: PublicKey, tokenAmount: number, maxTokensPerWallet: number, price: number, presaleIdentifier: number) => {
         let tokenAmountBN = new BN(tokenAmount);
         let maxTokensPerWalletBN = new BN(maxTokensPerWallet);
@@ -164,5 +188,5 @@ export default function usePresale() {
     // const incompleteTodos = useMemo(() => todos.filter((todo) => !todo.account.marked), [todos])
     // const completedTodos = useMemo(() => todos.filter((todo) => todo.account.marked), [todos])
 
-    return {walletConnected, initializedWallet, initializeWallet, loading, transactionPending, createPresale, editPresale, handleChange, getAllPresales }
+    return {walletConnected, initializedWallet, initializeWallet, loading, transactionPending, createPresale, editPresale, handleChange, handleTransactionPending, getAllPresales, getSolanaAirdrop }
 }

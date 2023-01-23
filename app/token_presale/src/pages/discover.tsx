@@ -5,7 +5,9 @@ import PresaleSection from '../components/presales/PresaleSection';
 import usePresale from '../hooks/usePresale'
 
 export default function discover() {
-  const { walletConnected, getAllPresales } = usePresale();
+
+  const { walletConnected, getAllPresales, transactionPending } = usePresale(); 
+
   return (
     <BasicPage activePage={'Discover'}>
       {walletConnected ? (

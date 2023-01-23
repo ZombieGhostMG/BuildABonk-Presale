@@ -1,28 +1,28 @@
 const FaqData = [
     {
         id: 1,
-        question: "What is MoonGhost?",
-        answer: "MoonGhost is not just another NFT project. We will bring innovation to crypto, NFTs, gaming, and more. We are not your average project."
+        question: "What is BuildABonk?",
+        answer: "BuildABonk aims to cater to all your token creation and buying needs. Allowing you to make the token of your dreams, whithout the hastle of CLIs and coding. Or do you just want to get an early entry into the next big thing? We've got you covered!"
     },
     {
         id: 2,
-        question: "What can I get for free?",
-        answer: "Our Guardian Ghost collection will be free to all to mint. Our MoonPasses will also include free mints."
+        question: "Why should I use BuildABonk?",
+        answer: "BuildABonk is the easiest way to create and buy presale tokens. We have a simple and intuitive interface, and are constantly improving our product."
     },
     {
         id: 3,
-        question: "When launch?",
-        answer: "We have three collections, each launching on different dates. Please refer to the 'NFTs' section for more info."
+        question: "What are the fees?",
+        answer: "There is a 5% fee on all transactions. 100% of the proceeds are burned!"
     },
     {
         id: 4,
-        question: "Which blockchain?",
-        answer: "Our NFTs will live on the Solana blockchain."
+        question: "Is the project open source?",
+        answer: "Yes! The project is open source, and you can find the code on our github page."
     },
     {
         id: 5,
-        question: "Is MoonGhost a 'Moonbirds derivative'?",
-        answer: "No, our project is not a derivative of any other project. The name for our project was decided in 2021 (long before Moonbirds was a thing). We are only associated with the projects listed in our 'partners' section."
+        question: "BONK?",
+        answer: "BONK!"
     },
     
 ]
