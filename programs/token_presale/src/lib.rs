@@ -1,6 +1,4 @@
 use anchor_lang::prelude::*;
-use anchor_spl::token;
-use anchor_spl::token::{Token, Mint, MintTo, Transfer, mint_to};
 
 pub mod constants;
 pub mod errors;
@@ -94,28 +92,6 @@ pub mod token_presale {
         Ok(())
     }
 
-    pub fn deposit_presale_tokens(ctx: Context<DepositPresaleTokens>, amount: u64) -> Result<()> {
-
-        let accounts = &ctx.accounts;
-        
-        let transfer_instruction = Transfer {
-            from: accounts.from.to_account_info(),
-            to: accounts.to.to_account_info(),
-            authority: accounts.authority.to_account_info()
-        };
-
-        let cpi_program = accounts.token_program.to_account_info();
-        let cpi_ctx = CpiContext::new(cpi_program, transfer_instruction);
-
-        anchor_spl::token::transfer(cpi_ctx, amount)?;
-
-        msg!(
-            "Deposited {} tokens to the presale",
-            amount
-        );
-
-        Ok(())
-    }
 }
 
 #[derive(Accounts)]
@@ -197,22 +173,4 @@ pub struct EditPresale<'info> {
     #[account(mut)]
     pub authority: Signer<'info>,
 
-}
-
-#[derive(Accounts)]
-#[instruction()]
-pub struct DepositPresaleTokens<'info> {
-    
-    pub token_program: Program<'info, Token>,
-    /// CHECK: This is the from account
-    #[account(mut)]
-    pub from: AccountInfo<'info>,
-    /// CHECK: This is the to account
-    #[account(mut)]
-    pub to: AccountInfo<'info>,
-
-    #[account(mut)]
-    pub authority: Signer<'info>,
-
-    
 }

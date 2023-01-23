@@ -1,7 +1,7 @@
 import React, {useState} from 'react'
-import AnimatedButton from './animated/AnimatedButton'
-import AnimatedOnViewTitleMd from './animated/AnimatedOnViewTitleMd'
-import usePresale from '../hooks/usePresale'
+import AnimatedButton from '../animated/AnimatedButton'
+import AnimatedOnViewTitleMd from '../animated/AnimatedOnViewTitleMd'
+import usePresale from '../../hooks/usePresale'
 import { ClipLoader } from 'react-spinners';
 
 export default function InitializeWalletCard() {

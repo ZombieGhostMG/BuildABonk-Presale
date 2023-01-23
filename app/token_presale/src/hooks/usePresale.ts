@@ -12,10 +12,6 @@ import toast from 'react-hot-toast';
 
 export default function usePresale() {
 
-    const handleChange = (e)=> {
-        setInput(e.target.value)
-    };
-
     const handleTransactionPending = (pending: boolean) => {
         setTransactionPending(pending);
     }
@@ -48,7 +44,6 @@ export default function usePresale() {
     const [allPresales, setAllPresales] = useState([]);
     const [loading, setLoading] = useState(false);
     const [transactionPending, setTransactionPending] = useState(false);
-    const [input, setInput] = useState("");
 
     const program = useMemo(() => {
         if (anchorWallet) {
@@ -185,8 +180,5 @@ export default function usePresale() {
 
     const getAllPresales = useMemo(() => allPresales.filter((presale) => presale), [allPresales])
 
-    // const incompleteTodos = useMemo(() => todos.filter((todo) => !todo.account.marked), [todos])
-    // const completedTodos = useMemo(() => todos.filter((todo) => todo.account.marked), [todos])
-
-    return {walletConnected, initializedWallet, initializeWallet, loading, transactionPending, createPresale, editPresale, handleChange, handleTransactionPending, getAllPresales, getSolanaAirdrop }
+    return {walletConnected, initializedWallet, initializeWallet, loading, transactionPending, createPresale, editPresale, handleTransactionPending, getAllPresales, getSolanaAirdrop }
 }

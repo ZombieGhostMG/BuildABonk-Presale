@@ -1,6 +1,6 @@
 import React from 'react'
 import WalletMultiButtonDynamic from './WalletMultiButtonDynamic'
-import AnimatedOnViewTitleMd from './animated/AnimatedOnViewTitleMd'
+import AnimatedOnViewTitleMd from '../animated/AnimatedOnViewTitleMd'
 
 export default function ConnectWalletCard() {
   return (
