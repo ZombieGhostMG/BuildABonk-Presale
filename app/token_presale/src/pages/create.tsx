@@ -4,7 +4,7 @@ import BasicPage from '../components/basic/BasicPage'
 import CreatePresaleForm from '../components/presales/CreatePresaleForm'
 import usePresale from '../hooks/usePresale'
 import ConnectWalletCard from '../components/wallet/ConnectWalletCard'
-import SolanaAirdropCard from '../components/SolanaAirdropCard'
+import SolanaAirdropCard from '../components/wallet/SolanaAirdropCard'
 import AnimatedButton from '../components/animated/AnimatedButton'
 import AnimatedOnViewTitleMd from '../components/animated/AnimatedOnViewTitleMd'
 import { ClipLoader } from 'react-spinners';

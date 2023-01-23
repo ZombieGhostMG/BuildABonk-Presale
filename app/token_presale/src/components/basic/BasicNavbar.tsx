@@ -7,7 +7,7 @@ import AnimatedLogo from '../animated/AnimatedLogo';
 import AnimatedMenuToggle from '../animated/AnimatedMenuToggle';
 import {goToTop} from '../../utils/ScrollToTopOnLoad'
 import AnimatedOnViewTitleMd from '../animated/AnimatedOnViewTitleMd';
-import WalletMultiButtonDynamic from '../WalletMultiButtonDynamic';
+import WalletMultiButtonDynamic from '../wallet/WalletMultiButtonDynamic';
 
 // add this
 
