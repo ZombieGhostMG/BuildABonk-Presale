@@ -2,7 +2,7 @@ const FaqData = [
     {
         id: 1,
         question: "What is BuildABonk?",
-        answer: "BuildABonk aims to cater to all your token creation and buying needs. Allowing you to make the token of your dreams, whithout the hastle of CLIs and coding. Or do you just want to get an early entry into the next big thing? We've got you covered!"
+        answer: "BuildABonk aims to cater to all your token creation and buying needs. Allowing you to make the token of your dreams, without the hassle of CLIs and coding. Or do you just want to get an early entry into the next big thing? We've got you covered!"
     },
     {
         id: 2,
