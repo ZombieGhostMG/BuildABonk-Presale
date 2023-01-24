@@ -2,7 +2,6 @@ import React, {useState} from 'react';
 import { useRouter } from 'next/router';
 import AnimatedLi from '../animated/AnimatedLi';
 import { motion, LayoutGroup, useCycle } from 'framer-motion';
-import { FaDiscord} from "react-icons/fa";
 import AnimatedLogo from '../animated/AnimatedLogo';
 import AnimatedMenuToggle from '../animated/AnimatedMenuToggle';
 import {goToTop} from '../../utils/ScrollToTopOnLoad'

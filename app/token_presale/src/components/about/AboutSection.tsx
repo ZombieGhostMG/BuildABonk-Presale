@@ -1,7 +1,7 @@
 import React from 'react';
 import AnimatedOnViewTitleLg from '../animated/AnimatedOnViewTitleLg';
 import aboutInfo from './aboutInfo';
-import AnimatedTeamCard from '../animated/AnimatedInfoCard';
+import AnimatedInfoCard from '../animated/AnimatedInfoCard';
 import AnimatedOnViewP from '../animated/AnimatedOnViewP';
 import { motion } from 'framer-motion';
 
@@ -10,7 +10,7 @@ const AboutSection = () => {
     const aboutElements = aboutInfo.map(
         item => {
             return (
-                <AnimatedTeamCard key={item.id} title={item.title} description={item.description} ink={item.link}/>
+                <AnimatedInfoCard key={item.id} title={item.title} description={item.description} link={item.link}/>
                 
             )
         }

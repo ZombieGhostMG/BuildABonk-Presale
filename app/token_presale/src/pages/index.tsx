@@ -6,8 +6,12 @@ import Navbar from '../components/basic/BasicNavbar';
 import ScrollToTop from '../components/other/ScrollToTopButton';
 import Head from 'next/head';
 import AboutSection from '../components/about/AboutSection';
+import { useRouter } from 'next/router';
+
 
 function Home() {
+
+  const router = useRouter();
 
   return (
       <>
