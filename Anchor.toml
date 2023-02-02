@@ -2,7 +2,7 @@
 seeds = false
 skip-lint = false
 [programs.devnet]
-token_presale = "Fg6PaFpoGXkYsidMpWTK6W2BeZ7FEfcYkg476zPFsLnS"
+token_presale = "3nCqy8nALeMvFPG8Rou5xL7UVcrRyz7QEUVHgV26ATP8"
 
 [registry]
 url = "https://api.apr.dev"
