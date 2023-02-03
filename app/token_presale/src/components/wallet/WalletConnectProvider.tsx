@@ -6,6 +6,7 @@ import { GlowWalletAdapter, PhantomWalletAdapter, SlopeWalletAdapter, SolflareWa
 import { clusterApiUrl } from '@solana/web3.js'
 
 export const WalletConnectProvider = ({ children }) => {
+    
     // The network can be set to 'devnet', 'testnet', or 'mainnet-beta'.
     const network = WalletAdapterNetwork.Devnet
 

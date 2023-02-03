@@ -2,15 +2,6 @@ use anchor_lang::prelude::*;
 
 #[account]
 #[derive(Default)]
-pub struct WalletDetails {
-    // Number of presales (opened and closed)
-    pub next_presale_identifier: u8,
-    // Bump used when creating the PDA
-    pub bump: u8
-}
-
-#[account]
-#[derive(Default)]
 pub struct PresaleDetails {
     // Mint address of the presale token
     pub token_mint_address: Pubkey,

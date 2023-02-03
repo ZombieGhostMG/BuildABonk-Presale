@@ -8,8 +8,15 @@ import {
   createAssociatedTokenAccountInstruction,
   getAssociatedTokenAddress,
   createInitializeMintInstruction,
+  getAccount
 } from "@solana/spl-token"; 
 import { assert } from "chai";
+import { 
+  PROGRAM_ID as TOKEN_METADATA_PROGRAM_ID
+} from '@metaplex-foundation/mpl-token-metadata';
+import { ASSOCIATED_PROGRAM_ID } from '@project-serum/anchor/dist/cjs/utils/token';
+
+// https://gateway.pinata.cloud/ipfs/QmbYunxDx4cpsf8KWdmDyiS8E41HW1QdBDLww3HUAyUgPP?_gl=1*1fecquc*_ga*MjA5NDM1ODAyMy4xNjU4MzI5NzY1*_ga_5RMPXG14TE*MTY3NTQyNDMxNC40LjEuMTY3NTQyNTU2OS4zNS4wLjA.
 
 describe("token_presale", () => {
   // Configure the client to use the local cluster.
@@ -23,6 +30,7 @@ describe("token_presale", () => {
   const PRESALE_SEED = "PRESALE_SEED";
 
   const myWallet = anchor.AnchorProvider.env().wallet;
+  const payer = anchor.AnchorProvider.env().wallet as anchor.Wallet;
   const myPubkey = myWallet.publicKey;
 
   const pubkey1 = anchor.web3.Keypair.generate().publicKey;
@@ -30,6 +38,14 @@ describe("token_presale", () => {
   const TEN = new BN(10);
   const ONE = new BN(1);
   const TWO = new BN(2);
+
+  const tokenTitle = "BuildABonkToken";
+  const tokenSymbol = "BAB";
+  const tokenUri = "https://gateway.pinata.cloud/ipfs/QmbYunxDx4cpsf8KWdmDyiS8E41HW1QdBDLww3HUAyUgPP?_gl=1*1fecquc*_ga*MjA5NDM1ODAyMy4xNjU4MzI5NzY1*_ga_5RMPXG14TE*MTY3NTQyNDMxNC40LjEuMTY3NTQyNTU2OS4zNS4wLjA.";
+
+  const mintKeypair: anchor.web3.Keypair = anchor.web3.Keypair.generate();
+  const bABToken = new PublicKey("FTiEdZ1fjNGTaHDgc7uwzMVFTKx1eDpDxR57Uhg6M4aK");
+  const MINT_DECIMALS = 10 ** 9;
 
 
   const getWalletPDA = async () => {
@@ -144,105 +160,95 @@ describe("token_presale", () => {
 
   });
 
+  /*
+  it("Create an SPL Token!", async () => {
 
+    const metadataAddress = (await anchor.web3.PublicKey.findProgramAddress(
+      [
+        Buffer.from("metadata"),
+        TOKEN_METADATA_PROGRAM_ID.toBuffer(),
+        mintKeypair.publicKey.toBuffer(),
+      ],
+      TOKEN_METADATA_PROGRAM_ID
+    ))[0];
 
-  const mintKey: anchor.web3.Keypair = anchor.web3.Keypair.generate();
-  // AssociatedTokenAccount for anchor's workspace wallet
-  let associatedTokenAccount = undefined;
+    const sx = await program.methods.createToken(
+      tokenTitle, tokenSymbol, tokenUri
+    )
+      .accounts({
+        metadataAccount: metadataAddress,
+        mintAccount: mintKeypair.publicKey,
+        mintAuthority: payer.publicKey,
+        payer: payer.publicKey,
+        rent: anchor.web3.SYSVAR_RENT_PUBKEY,
+        systemProgram: anchor.web3.SystemProgram.programId,
+        tokenProgram: anchor.utils.token.TOKEN_PROGRAM_ID,
+        tokenMetadataProgram: TOKEN_METADATA_PROGRAM_ID,
+      })
+      .signers([mintKeypair, payer.payer])
+      .rpc();
 
-  it("Mint a token", async () => {
-    // Get anchor's wallet's public key
-    const key = anchor.AnchorProvider.env().wallet.publicKey;
-    // Get the amount of SOL needed to pay rent for our Token Mint
-    const lamports: number = await program.provider.connection.getMinimumBalanceForRentExemption(
-      MINT_SIZE
-    );
-
-    // Get the ATA for a token and the account that we want to own the ATA (but it might not existing on the SOL network yet)
-    associatedTokenAccount = await getAssociatedTokenAddress(
-      mintKey.publicKey,
-      key
-    );
-
-    // Fires a list of instructions
-    const mint_tx = new anchor.web3.Transaction().add(
-      // Use anchor to create an account from the mint key that we created
-      anchor.web3.SystemProgram.createAccount({
-        fromPubkey: key,
-        newAccountPubkey: mintKey.publicKey,
-        space: MINT_SIZE,
-        programId: TOKEN_PROGRAM_ID,
-        lamports,
-      }),
-      // Fire a transaction to create our mint account that is controlled by our anchor wallet
-      createInitializeMintInstruction(
-        mintKey.publicKey, 0, key, key
-      ),
-      // Create the ATA account that is associated with our mint on our anchor wallet
-      createAssociatedTokenAccountInstruction(
-        key, associatedTokenAccount, key, mintKey.publicKey
-      )
-    );
-
-    // sends and create the transaction
-    const res = await anchor.AnchorProvider.env().sendAndConfirm(mint_tx, [mintKey]);
-
-    console.log(
-      await program.provider.connection.getParsedAccountInfo(mintKey.publicKey)
-    );
-
-    console.log("Account: ", res);
-    console.log("Mint key: ", mintKey.publicKey.toString());
-    console.log("User: ", key.toString());
-
-    // Executes our code to mint our token into our specified ATA
-    await program.methods.mintToken().accounts({
-      mint: mintKey.publicKey,
-      tokenProgram: TOKEN_PROGRAM_ID,
-      tokenAccount: associatedTokenAccount,
-      authority: key,
-    }).rpc();
-
+    console.log("Success!");
+        console.log(`   Mint Address: ${mintKeypair.publicKey}`);
+        console.log(`   Tx Signature: ${sx}`);
   });
+  
 
-  it("Transfer token", async () => {
-    // Get anchor's wallet's public key
-    const myWallet = anchor.AnchorProvider.env().wallet.publicKey;
-    // Wallet that will receive the token 
-    const toWallet: anchor.web3.Keypair = anchor.web3.Keypair.generate();
-    // The ATA for a token on the to wallet (but might not exist yet)
-    const toATA = await getAssociatedTokenAddress(
-      mintKey.publicKey,
-      toWallet.publicKey
-    );
+  it("Mint some tokens to your wallet!", async () => {
 
-    // Fires a list of instructions
-    const mint_tx = new anchor.web3.Transaction().add(
-      // Create the ATA account that is associated with our To wallet
-      createAssociatedTokenAccountInstruction(
-        myWallet, toATA, toWallet.publicKey, mintKey.publicKey
-      )
-    );
+    const associatedTokenAccountAddress = await anchor.utils.token.associatedAddress({
+      mint: mintKeypair.publicKey,
+      owner: payer.publicKey,
+    });
 
-    // Sends and create the transaction
-    await anchor.AnchorProvider.env().sendAndConfirm(mint_tx, []);
+    const sx = await program.methods.mintTo(
+      new anchor.BN(150)
+    )
+      .accounts({
+        associatedTokenAccount: associatedTokenAccountAddress,
+        mintAccount: mintKeypair.publicKey,
+        mintAuthority: payer.publicKey,
+        payer: payer.publicKey,
+        rent: anchor.web3.SYSVAR_RENT_PUBKEY,
+        systemProgram: anchor.web3.SystemProgram.programId,
+        tokenProgram: anchor.utils.token.TOKEN_PROGRAM_ID,
+        associatedTokenProgram: ASSOCIATED_PROGRAM_ID,
+      })
+      .signers([payer.payer])
+      .rpc();
 
-    // Executes our transfer smart contract 
-    await program.methods.transferToken().accounts({
-      tokenProgram: TOKEN_PROGRAM_ID,
-      from: associatedTokenAccount,
-      fromAuthority: myWallet,
-      to: toATA,
-    }).rpc();
-
+    console.log("Success!");
+        console.log(`   Mint Address: ${mintKeypair.publicKey}`);
+        console.log(`   Tx Signature: ${sx}`);
   });
+  */
 
+  it("Mint 1M BAB tokens to your wallet!", async () => {
 
+    const associatedTokenAccountAddress = await anchor.utils.token.associatedAddress({
+      mint: bABToken,
+      owner: payer.publicKey,
+    });
 
+    const tx = await program.methods.mintTo(
+      new anchor.BN(1000000 * MINT_DECIMALS)
+    )
+      .accounts({
+        associatedTokenAccount: associatedTokenAccountAddress,
+        mintAccount: bABToken,
+        mintAuthority: payer.publicKey,
+        payer: payer.publicKey,
+        rent: anchor.web3.SYSVAR_RENT_PUBKEY,
+        systemProgram: anchor.web3.SystemProgram.programId,
+        tokenProgram: anchor.utils.token.TOKEN_PROGRAM_ID,
+        associatedTokenProgram: ASSOCIATED_PROGRAM_ID,
+      })
+      .signers([payer.payer])
+      .rpc();
 
-
-
-
-
+    console.log("Success!");
+        console.log(`   Mint Address: ${bABToken}`);
+        console.log(`   Tx Signature: ${tx}`);
+  });
   
 });
