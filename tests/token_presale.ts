@@ -303,6 +303,54 @@ describe("token_presale", () => {
         console.log(`   Tx Signature: ${sx}`);
   });
 
+  it("Withdraw tokens from presale PDA 1!", async () => {
+
+    const presalePDA = await getPresalePDA( 1 );
+
+    console.log(`Presale address: ${presalePDA}`);
+
+    console.log( `Mint: ${bABTokenPubkey}`)
+
+    const fromAssociatedTokenAccountAddress = await anchor.utils.token.associatedAddress({
+      mint: bABTokenPubkey,
+      owner: presalePDA,
+    });
+
+    console.log(`From: ${fromAssociatedTokenAccountAddress}`);
+
+    const toAssociatedTokenAccountAddress = await anchor.utils.token.associatedAddress({
+      mint: bABTokenPubkey,
+      owner: payer.publicKey,
+    });
+
+    console.log(`To: ${toAssociatedTokenAccountAddress}`);
+
+    const sx = await program.methods.withdrawPresaleTokens(
+      new anchor.BN(150 * MINT_DECIMALS),
+      1
+    )
+    .accounts({
+      presaleDetails: presalePDA,
+      mintAccount: bABTokenPubkey,
+      fromAssociatedTokenAccount: fromAssociatedTokenAccountAddress,
+      owner: presalePDA,
+      toAssociatedTokenAccount: toAssociatedTokenAccountAddress,
+      recipient: payer.publicKey,
+      payer: payer.publicKey,
+      rent: anchor.web3.SYSVAR_RENT_PUBKEY,
+      systemProgram: anchor.web3.SystemProgram.programId,
+      tokenProgram: anchor.utils.token.TOKEN_PROGRAM_ID,
+      associatedTokenProgram: ASSOCIATED_PROGRAM_ID,
+    })
+    .signers([payer.payer])
+    .rpc({skipPreflight: true});
+
+    console.log("Success!");
+        console.log(`   Mint Address: ${bABTokenPubkey}`);
+        console.log(`   Tx Signature: ${sx}`);
+  });
+
+  /*
   it("Transfer some tokens to another wallet!", async () => {
 
     const fromAssociatedTokenAccountAddress = await anchor.utils.token.associatedAddress({
@@ -336,5 +384,10 @@ describe("token_presale", () => {
         console.log(`   Mint Address: ${bABTokenPubkey}`);
         console.log(`   Tx Signature: ${sx}`);
   });
+  */
+
+
+
+
   
 });

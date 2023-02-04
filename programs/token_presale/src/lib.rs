@@ -100,6 +100,19 @@ pub mod token_presale {
         )
     }
 
+    pub fn withdraw_presale_tokens(
+        ctx: Context<WithdrawPresaleTokens>, 
+        quantity: u64,
+        presale_identifier: u8,
+    ) -> Result<()> {
+
+        withdraw_presale_tokens::withdraw_presale_tokens(
+            ctx, 
+            quantity,
+            presale_identifier,
+        )
+    }
+
 
 }
 

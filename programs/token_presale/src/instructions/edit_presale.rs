@@ -49,7 +49,6 @@ pub struct EditPresale<'info> {
     )]
     pub presale_details: Account<'info, PresaleDetails>,
     
-    // Set the authority to the transaction signer
     #[account(mut)]
     pub authority: Signer<'info>,
 
