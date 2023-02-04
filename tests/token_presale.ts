@@ -16,7 +16,7 @@ import {
 } from '@metaplex-foundation/mpl-token-metadata';
 import { ASSOCIATED_PROGRAM_ID } from '@project-serum/anchor/dist/cjs/utils/token';
 
-// https://gateway.pinata.cloud/ipfs/QmbYunxDx4cpsf8KWdmDyiS8E41HW1QdBDLww3HUAyUgPP?_gl=1*1fecquc*_ga*MjA5NDM1ODAyMy4xNjU4MzI5NzY1*_ga_5RMPXG14TE*MTY3NTQyNDMxNC40LjEuMTY3NTQyNTU2OS4zNS4wLjA.
+// BAB metadata - https://gateway.pinata.cloud/ipfs/QmbYunxDx4cpsf8KWdmDyiS8E41HW1QdBDLww3HUAyUgPP?_gl=1*1fecquc*_ga*MjA5NDM1ODAyMy4xNjU4MzI5NzY1*_ga_5RMPXG14TE*MTY3NTQyNDMxNC40LjEuMTY3NTQyNTU2OS4zNS4wLjA.
 
 describe("token_presale", () => {
   // Configure the client to use the local cluster.
@@ -44,8 +44,10 @@ describe("token_presale", () => {
   const tokenUri = "https://gateway.pinata.cloud/ipfs/QmbYunxDx4cpsf8KWdmDyiS8E41HW1QdBDLww3HUAyUgPP?_gl=1*1fecquc*_ga*MjA5NDM1ODAyMy4xNjU4MzI5NzY1*_ga_5RMPXG14TE*MTY3NTQyNDMxNC40LjEuMTY3NTQyNTU2OS4zNS4wLjA.";
 
   const mintKeypair: anchor.web3.Keypair = anchor.web3.Keypair.generate();
-  const bABToken = new PublicKey("FTiEdZ1fjNGTaHDgc7uwzMVFTKx1eDpDxR57Uhg6M4aK");
+  const bABTokenPubkey = new PublicKey("FTiEdZ1fjNGTaHDgc7uwzMVFTKx1eDpDxR57Uhg6M4aK");
   const MINT_DECIMALS = 10 ** 9;
+
+  const recipientWallet: anchor.web3.Keypair = anchor.web3.Keypair.generate();
 
 
   const getWalletPDA = async () => {
@@ -65,6 +67,8 @@ describe("token_presale", () => {
       )
     )[0];
   };
+
+  
 
   console.log(`My pubkey: ${myPubkey}`);
   console.log(`pubkey1: ${pubkey1}`);
@@ -149,6 +153,7 @@ describe("token_presale", () => {
     const walletAccounts = await program.account.walletDetails.all();
     const presaleAccounts = await program.account.presaleDetails.all();
     const presaleAccount = await program.account.presaleDetails.fetch(presalePDA);
+    const allAccounts = await program.account;
 
     // const todoAccounts = await program.account.todoAccount.all([authorFilter(publicKey.toString())])
 
@@ -157,6 +162,7 @@ describe("token_presale", () => {
 
     console.log(walletAccounts);
     console.log(presaleAccounts);
+    console.log(allAccounts);
 
   });
 
@@ -226,17 +232,97 @@ describe("token_presale", () => {
   it("Mint 1M BAB tokens to your wallet!", async () => {
 
     const associatedTokenAccountAddress = await anchor.utils.token.associatedAddress({
-      mint: bABToken,
+      mint: bABTokenPubkey,
       owner: payer.publicKey,
     });
 
     const tx = await program.methods.mintTo(
       new anchor.BN(1000000 * MINT_DECIMALS)
     )
+    .accounts({
+      associatedTokenAccount: associatedTokenAccountAddress,
+      mintAccount: bABTokenPubkey,
+      mintAuthority: payer.publicKey,
+      payer: payer.publicKey,
+      rent: anchor.web3.SYSVAR_RENT_PUBKEY,
+      systemProgram: anchor.web3.SystemProgram.programId,
+      tokenProgram: anchor.utils.token.TOKEN_PROGRAM_ID,
+      associatedTokenProgram: ASSOCIATED_PROGRAM_ID,
+    })
+    .signers([payer.payer])
+    .rpc();
+
+    console.log("Success!");
+        console.log(`   Mint Address: ${bABTokenPubkey}`);
+        console.log(`   Your BAB Token ATA: ${associatedTokenAccountAddress}`)
+        console.log(`   Tx Signature: ${tx}`);
+  });
+
+  it("Transfer some tokens to presale PDA 1!", async () => {
+
+    const presalePDA = await getPresalePDA( 1 );
+
+    console.log(`Presale address: ${presalePDA}`);
+
+    console.log( `Mint: ${bABTokenPubkey}`)
+
+    const fromAssociatedTokenAccountAddress = await anchor.utils.token.associatedAddress({
+      mint: bABTokenPubkey,
+      owner: payer.publicKey,
+    });
+
+    console.log(`From: ${fromAssociatedTokenAccountAddress}`);
+
+    const toAssociatedTokenAccountAddress = await anchor.utils.token.associatedAddress({
+      mint: bABTokenPubkey,
+      owner: presalePDA,
+    });
+
+    console.log(`To: ${toAssociatedTokenAccountAddress}`);
+
+    const sx = await program.methods.transferTokens(
+      new anchor.BN(150 * MINT_DECIMALS)
+    )
+    .accounts({
+      mintAccount: bABTokenPubkey,
+      fromAssociatedTokenAccount: fromAssociatedTokenAccountAddress,
+      owner: payer.publicKey,
+      toAssociatedTokenAccount: toAssociatedTokenAccountAddress,
+      recipient: presalePDA,
+      payer: payer.publicKey,
+      rent: anchor.web3.SYSVAR_RENT_PUBKEY,
+      systemProgram: anchor.web3.SystemProgram.programId,
+      tokenProgram: anchor.utils.token.TOKEN_PROGRAM_ID,
+      associatedTokenProgram: ASSOCIATED_PROGRAM_ID,
+    })
+    .signers([payer.payer])
+    .rpc();
+
+    console.log("Success!");
+        console.log(`   Mint Address: ${bABTokenPubkey}`);
+        console.log(`   Tx Signature: ${sx}`);
+  });
+
+  it("Transfer some tokens to another wallet!", async () => {
+
+    const fromAssociatedTokenAccountAddress = await anchor.utils.token.associatedAddress({
+      mint: bABTokenPubkey,
+      owner: payer.publicKey,
+    });
+    const toAssociatedTokenAccountAddress = await anchor.utils.token.associatedAddress({
+      mint: bABTokenPubkey,
+      owner: recipientWallet.publicKey,
+    });
+
+    const sx = await program.methods.transferTokens(
+      new anchor.BN(150 * MINT_DECIMALS)
+    )
       .accounts({
-        associatedTokenAccount: associatedTokenAccountAddress,
-        mintAccount: bABToken,
-        mintAuthority: payer.publicKey,
+        mintAccount: bABTokenPubkey,
+        fromAssociatedTokenAccount: fromAssociatedTokenAccountAddress,
+        owner: payer.publicKey,
+        toAssociatedTokenAccount: toAssociatedTokenAccountAddress,
+        recipient: recipientWallet.publicKey,
         payer: payer.publicKey,
         rent: anchor.web3.SYSVAR_RENT_PUBKEY,
         systemProgram: anchor.web3.SystemProgram.programId,
@@ -247,8 +333,8 @@ describe("token_presale", () => {
       .rpc();
 
     console.log("Success!");
-        console.log(`   Mint Address: ${bABToken}`);
-        console.log(`   Tx Signature: ${tx}`);
+        console.log(`   Mint Address: ${bABTokenPubkey}`);
+        console.log(`   Tx Signature: ${sx}`);
   });
   
 });

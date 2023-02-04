@@ -89,6 +89,17 @@ pub mod token_presale {
         )
     }
 
+    pub fn transfer_tokens(
+        ctx: Context<TransferTokens>, 
+        quantity: u64,
+    ) -> Result<()> {
+
+        transfer_tokens::transfer_tokens(
+            ctx, 
+            quantity,
+        )
+    }
+
 
 }
 
