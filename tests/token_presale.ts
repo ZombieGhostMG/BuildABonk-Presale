@@ -258,7 +258,7 @@ describe("token_presale", () => {
         console.log(`   Tx Signature: ${tx}`);
   });
 
-  it("Transfer some tokens to presale PDA 1!", async () => {
+  it("Deposit tokens to presale PDA 1!", async () => {
 
     const presalePDA = await getPresalePDA( 1 );
 
@@ -280,15 +280,16 @@ describe("token_presale", () => {
 
     console.log(`To: ${toAssociatedTokenAccountAddress}`);
 
-    const sx = await program.methods.transferTokens(
-      new anchor.BN(150 * MINT_DECIMALS)
+    const sx = await program.methods.depositPresaleTokens(
+      new anchor.BN(150 * MINT_DECIMALS),
+      1
     )
     .accounts({
       mintAccount: bABTokenPubkey,
       fromAssociatedTokenAccount: fromAssociatedTokenAccountAddress,
-      owner: payer.publicKey,
+      fromAuthority: payer.publicKey,
       toAssociatedTokenAccount: toAssociatedTokenAccountAddress,
-      recipient: presalePDA,
+      presaleDetailsPda: presalePDA,
       payer: payer.publicKey,
       rent: anchor.web3.SYSVAR_RENT_PUBKEY,
       systemProgram: anchor.web3.SystemProgram.programId,
@@ -330,10 +331,9 @@ describe("token_presale", () => {
       1
     )
     .accounts({
-      presaleDetails: presalePDA,
+      presaleDetailsPda: presalePDA,
       mintAccount: bABTokenPubkey,
       fromAssociatedTokenAccount: fromAssociatedTokenAccountAddress,
-      owner: presalePDA,
       toAssociatedTokenAccount: toAssociatedTokenAccountAddress,
       recipient: payer.publicKey,
       payer: payer.publicKey,
