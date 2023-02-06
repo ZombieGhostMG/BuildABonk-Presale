@@ -23,7 +23,9 @@ pub fn create_presale(
     presale.token_amount = token_amount;
     presale.max_token_amount_per_address = max_token_amount_per_address;
     presale.price_per_token = price_per_token;
+    presale.is_live = false;
     presale.identifier = wallet.next_presale_identifier;
+    presale.authority = ctx.accounts.authority.key();
     presale.bump = *ctx.bumps.get("presale_details").unwrap();
 
     // Increase the wallet's presale count
@@ -59,7 +61,7 @@ pub struct CreatePresale<'info> {
     #[account(
         init,
         payer = authority,
-        space = 8 + 32 + 32 + 8 + 8 + 8 + 8 + 1,
+        space = 8 + 32 + 32 + 8 + 8 + 8 + 1 + 1 + 32 + 1,
         seeds = [PRESALE_SEED, authority.key().as_ref(), [wallet_details.next_presale_identifier].as_ref()],
         bump
     )]

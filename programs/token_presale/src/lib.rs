@@ -126,6 +126,32 @@ pub mod token_presale {
         )
     }
 
+    pub fn buy_presale_tokens(
+        ctx: Context<BuyPresaleTokens>, 
+        quantity: u64,
+        presale_identifier: u8,
+        presale_authority: Pubkey,
+    ) -> Result<()> {
+
+        buy_presale_tokens::buy_presale_tokens(
+            ctx, 
+            quantity,
+            presale_identifier,
+            presale_authority,
+        )
+    }
+
+    pub fn start_presale(
+        ctx: Context<StartPresale>, 
+        presale_identifier: u8,
+    ) -> Result<()> {
+
+        start_presale::start_presale(
+            ctx, 
+            presale_identifier,
+        )
+    }
+
 
 }
 

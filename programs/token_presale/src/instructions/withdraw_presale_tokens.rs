@@ -20,17 +20,17 @@ pub fn withdraw_presale_tokens(
 
     msg!("Withdrawing presale tokens from presale {}...", presale_identifier);
     msg!("Mint: {}", &ctx.accounts.mint_account.to_account_info().key());   
-    msg!("From Token Address: {}", &ctx.accounts.from_associated_token_account.key());     
+    msg!("From Token Address: {}", &ctx.accounts.presale_associated_token_account.key());     
     msg!("To Token Address: {}", &ctx.accounts.to_associated_token_account.key());     
     token::transfer(
         CpiContext::new_with_signer(
             ctx.accounts.token_program.to_account_info(),
             token::Transfer {
-                from: ctx.accounts.from_associated_token_account.to_account_info(),
+                from: ctx.accounts.presale_associated_token_account.to_account_info(),
                 to: ctx.accounts.to_associated_token_account.to_account_info(),
                 authority: ctx.accounts.presale_details_pda.to_account_info(),
             },
-            &[&[b"PRESALE_SEED", ctx.accounts.payer.key().as_ref(), &[presale_identifier], bump][..]],
+            &[&[b"PRESALE_SEED", ctx.accounts.authority.key().as_ref(), &[presale_identifier], bump][..]],
         ),
         quantity,
     )?;
@@ -47,29 +47,27 @@ pub struct WithdrawPresaleTokens<'info> {
 
     #[account(
         mut,
-        seeds = [PRESALE_SEED, payer.key().as_ref(), [presale_identifier].as_ref()],
+        seeds = [PRESALE_SEED, authority.key().as_ref(), [presale_identifier].as_ref()],
         bump = presale_details_pda.bump
     )]
     pub presale_details_pda: Account<'info, PresaleDetails>,
     #[account(mut)]
     pub mint_account: Account<'info, token::Mint>,
     #[account(
-        init_if_needed,
-        payer = payer,
         associated_token::mint = mint_account,
         associated_token::authority = presale_details_pda,
     )]
-    pub from_associated_token_account: Account<'info, token::TokenAccount>,
+    pub presale_associated_token_account: Account<'info, token::TokenAccount>,
     #[account(
         init_if_needed,
-        payer = payer,
+        payer = authority,
         associated_token::mint = mint_account,
         associated_token::authority = recipient,
     )]
     pub to_associated_token_account: Account<'info, token::TokenAccount>,
     pub recipient: SystemAccount<'info>,
     #[account(mut)]
-    pub payer: Signer<'info>,
+    pub authority: Signer<'info>,
     pub rent: Sysvar<'info, Rent>,
     pub system_program: Program<'info, System>,
     pub token_program: Program<'info, token::Token>,

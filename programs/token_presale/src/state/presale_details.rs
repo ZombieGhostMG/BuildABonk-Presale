@@ -13,8 +13,12 @@ pub struct PresaleDetails {
     pub max_token_amount_per_address: u64,
     // Quote token per presale token
     pub price_per_token: u64,
+    // Presale is buyable
+    pub is_live: bool,
     // Identifier for finding the PDA
     pub identifier: u8,
+    // Authority of the presale
+    pub authority: Pubkey,
     // Bump used when creating the PDA
     pub bump: u8
 }
