@@ -13,7 +13,7 @@ pub fn buy_presale_tokens(
     ctx: Context<BuyPresaleTokens>, 
     quantity: u64,
     presale_identifier: u8,
-    _presale_authority: Pubkey,
+    presale_authority: Pubkey,
 ) -> Result<()> {
 
     msg!("Transferring quote tokens to presale {}...", presale_identifier);
@@ -34,18 +34,21 @@ pub fn buy_presale_tokens(
 
     msg!("Quote tokens transferred successfully.");
 
+    let bump = &[ctx.accounts.presale_details_pda.bump];
+
     msg!("Transferring presale tokens to buyer {}...", &ctx.accounts.buyer.key());
     msg!("Mint: {}", &ctx.accounts.presale_token_mint_account.to_account_info().key());   
     msg!("From Token Address: {}", &ctx.accounts.presale_presale_token_associated_token_account.key());     
     msg!("To Token Address: {}", &ctx.accounts.buyer_presale_token_associated_token_account.key());     
     token::transfer(
-        CpiContext::new(
+        CpiContext::new_with_signer(
             ctx.accounts.token_program.to_account_info(),
             token::Transfer {
                 from: ctx.accounts.presale_presale_token_associated_token_account.to_account_info(),
                 to: ctx.accounts.buyer_presale_token_associated_token_account.to_account_info(),
                 authority: ctx.accounts.presale_details_pda.to_account_info(),
             },
+            &[&[b"PRESALE_SEED", presale_authority.key().as_ref(), &[presale_identifier], bump][..]],
         ),
         quantity,
     )?;
@@ -62,40 +65,44 @@ pub struct BuyPresaleTokens<'info> {
 
     // Quote token accounts
     #[account(mut)]
-    pub quote_token_mint_account: Account<'info, token::Mint>,
+    pub quote_token_mint_account: Box<Account<'info, token::Mint>>,
     #[account(
+        mut,
         associated_token::mint = quote_token_mint_account,
         associated_token::authority = buyer_authority,
     )]
-    pub buyer_quote_token_associated_token_account: Account<'info, token::TokenAccount>,
+    pub buyer_quote_token_associated_token_account: Box<Account<'info, token::TokenAccount>>,
     #[account(
+        init_if_needed,
+        payer = buyer,
         associated_token::mint = quote_token_mint_account,
         associated_token::authority = presale_details_pda,
     )]
-    pub presale_quote_token_associated_token_account: Account<'info, token::TokenAccount>,
+    pub presale_quote_token_associated_token_account: Box<Account<'info, token::TokenAccount>>,
 
     // Presale token accounts
     #[account(mut)]
-    pub presale_token_mint_account: Account<'info, token::Mint>,
+    pub presale_token_mint_account: Box<Account<'info, token::Mint>>,
     #[account(
+        mut,
         associated_token::mint = presale_token_mint_account,
         associated_token::authority = buyer_authority,
     )]
-    pub buyer_presale_token_associated_token_account: Account<'info, token::TokenAccount>,
+    pub buyer_presale_token_associated_token_account: Box<Account<'info, token::TokenAccount>>,
     #[account(
         init_if_needed,
         payer = buyer,
         associated_token::mint = presale_token_mint_account,
         associated_token::authority = presale_details_pda,
     )]
-    pub presale_presale_token_associated_token_account: Account<'info, token::TokenAccount>,
+    pub presale_presale_token_associated_token_account: Box<Account<'info, token::TokenAccount>>,
 
     #[account(
         mut,
         seeds = [PRESALE_SEED, presale_authority.key().as_ref(), [presale_identifier].as_ref()],
         bump = presale_details_pda.bump
     )]
-    pub presale_details_pda: Account<'info, PresaleDetails>,
+    pub presale_details_pda: Box<Account<'info, PresaleDetails>>,
     #[account(constraint = buyer.key() == buyer_authority.key())]
     pub buyer_authority: SystemAccount<'info>,
     #[account(mut)]

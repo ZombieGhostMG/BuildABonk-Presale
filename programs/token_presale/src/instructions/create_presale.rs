@@ -55,17 +55,17 @@ pub struct CreatePresale<'info> {
         seeds = [WALLET_SEED, authority.key().as_ref()],
         bump = wallet_details.bump
     )]
-    pub wallet_details: Account<'info, WalletDetails>,
+    pub wallet_details: Box<Account<'info, WalletDetails>>,
     
     // Initialize the presale_detils account
     #[account(
         init,
         payer = authority,
-        space = 8 + 32 + 32 + 8 + 8 + 8 + 1 + 1 + 32 + 1,
+        space = 8 + std::mem::size_of::<PresaleDetails>(),
         seeds = [PRESALE_SEED, authority.key().as_ref(), [wallet_details.next_presale_identifier].as_ref()],
         bump
     )]
-    pub presale_details: Account<'info, PresaleDetails>,
+    pub presale_details: Box<Account<'info, PresaleDetails>>,
     
     // Set the authority to the transaction signer
     #[account(mut)]

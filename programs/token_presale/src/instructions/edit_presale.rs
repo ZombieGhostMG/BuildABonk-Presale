@@ -47,7 +47,7 @@ pub struct EditPresale<'info> {
         seeds = [PRESALE_SEED, authority.key().as_ref(), [presale_identifier].as_ref()],
         bump = presale_details.bump
     )]
-    pub presale_details: Account<'info, PresaleDetails>,
+    pub presale_details: Box<Account<'info, PresaleDetails>>,
     
     #[account(mut)]
     pub authority: Signer<'info>,

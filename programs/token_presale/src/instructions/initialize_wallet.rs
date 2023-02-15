@@ -26,11 +26,11 @@ pub struct InitializeWallet<'info> {
     #[account(
         init,
         payer = authority,
-        space = 8 + 8 + 1,
+        space = 8 + std::mem::size_of::<WalletDetails>(),
         seeds = [WALLET_SEED, authority.key().as_ref()],
         bump
     )]
-    pub wallet_details: Account<'info, WalletDetails>,
+    pub wallet_details: Box<Account<'info, WalletDetails>>,
     
     // Set the authority to the transaction signer
     #[account(mut)]

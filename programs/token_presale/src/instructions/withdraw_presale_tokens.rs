@@ -18,7 +18,7 @@ pub fn withdraw_presale_tokens(
 
     let bump = &[ctx.accounts.presale_details_pda.bump];
 
-    msg!("Withdrawing presale tokens from presale {}...", presale_identifier);
+    msg!("Withdrawing presale tokens from presale {}...", &presale_identifier);
     msg!("Mint: {}", &ctx.accounts.mint_account.to_account_info().key());   
     msg!("From Token Address: {}", &ctx.accounts.presale_associated_token_account.key());     
     msg!("To Token Address: {}", &ctx.accounts.to_associated_token_account.key());     
@@ -50,10 +50,11 @@ pub struct WithdrawPresaleTokens<'info> {
         seeds = [PRESALE_SEED, authority.key().as_ref(), [presale_identifier].as_ref()],
         bump = presale_details_pda.bump
     )]
-    pub presale_details_pda: Account<'info, PresaleDetails>,
+    pub presale_details_pda: Box<Account<'info, PresaleDetails>>,
     #[account(mut)]
     pub mint_account: Account<'info, token::Mint>,
     #[account(
+        mut,
         associated_token::mint = mint_account,
         associated_token::authority = presale_details_pda,
     )]

@@ -63,7 +63,7 @@ pub struct DepositPresaleTokens<'info> {
         seeds = [PRESALE_SEED, from_authority.key().as_ref(), [presale_identifier].as_ref()],
         bump = presale_details_pda.bump
     )]
-    pub presale_details_pda: Account<'info, PresaleDetails>,
+    pub presale_details_pda: Box<Account<'info, PresaleDetails>>,
     #[account(mut)]
     pub payer: Signer<'info>,
     pub rent: Sysvar<'info, Rent>,

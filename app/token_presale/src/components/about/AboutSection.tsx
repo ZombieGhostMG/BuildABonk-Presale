@@ -24,7 +24,6 @@ const AboutSection = () => {
                 <AnimatedOnViewP className=' mb-8 text-cC' text='Welcome to our revolutionary platform for token building, presale hosting, and buying.
                  Our platform is designed to make the process of creating, hosting, and buying tokens seamless and efficient. With our DeFi, opensource programs, you can easily create your own tokens, host successful presales, and buy tokens from other projects with safety and ease.
                  Join us now and be a part of the future of Solana!' />
-                {/* <AnimatedOnViewP className=' mb-6 text-cC' text='All four core team members will be doxxing soon.' /> */}
                 <motion.div className='flex justify-center flex-row max-w-[1240px] flex-wrap overflow-hidden'>
                     {aboutElements}
                 </motion.div>

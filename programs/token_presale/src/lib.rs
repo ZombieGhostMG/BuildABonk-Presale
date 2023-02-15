@@ -7,7 +7,7 @@ pub mod instructions;
 
 use instructions::*;
 
-declare_id!("3nCqy8nALeMvFPG8Rou5xL7UVcrRyz7QEUVHgV26ATP8");
+declare_id!("8k8wGkeGBRkHbniT7PYpaS9zPC5jDhVbpG6jx9k2u9AG");
 
 #[program]
 pub mod token_presale {
